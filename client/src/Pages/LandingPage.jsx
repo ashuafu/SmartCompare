@@ -1,93 +1,88 @@
-import React from "react";
-import { FaSearch, FaPhone, FaUser, FaShoppingCart, FaBars, FaTimes, FaHeart, FaHistory } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaPhone, FaUser, FaShoppingCart, FaBars, FaTimes, FaHeart, FaHistory } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { BsChevronDown } from "react-icons/bs";
 
 const LandingPage = () => {
-  //    <style>
-  //    #nprogress {
-  //      pointer-events: none;
-  //    }
-  //    #nprogress .bar {
-  //      background: #3c50e0;
-  //      position: fixed;
-  //      z-index: 1600;
-  //      top: 0;
-  //      left: 0;
-  //      width: 100%;
-  //      height: 3px;
-  //    }
-  //    #nprogress .peg {
-  //      display: block;
-  //      position: absolute;
-  //      right: 0;
-  //      width: 100px;
-  //      height: 100%;
-  //      box-shadow: none;
-  //      opacity: 1;
-  //      -webkit-transform: rotate(3deg) translate(0px, -4px);
-  //      -ms-transform: rotate(3deg) translate(0px, -4px);
-  //      transform: rotate(3deg) translate(0px, -4px);
-  //    }
-  //    #nprogress .spinner {
-  //      display: block;
-  //      position: fixed;
-  //      z-index: 1600;
-  //      top: 15px;
-  //      right: 15px;
-  //    }
-  //    #nprogress .spinner-icon {
-  //      width: 18px;
-  //      height: 18px;
-  //      box-sizing: border-box;
-  //      border: 2px solid transparent;
-  //      border-top-color: #3c50e0;
-  //      border-left-color: #3c50e0;
-  //      border-radius: 50%;
-  //      -webkit-animation: nprogress-spinner 400ms linear infinite;
-  //      animation: nprogress-spinner 400ms linear infinite;
-  //    }
-  //    .nprogress-custom-parent {
-  //      overflow: hidden;
-  //      position: relative;
-  //    }
-  //    .nprogress-custom-parent #nprogress .bar,
-  //    .nprogress-custom-parent #nprogress .spinner {
-  //      position: absolute;
-  //    }
-  //    @-webkit-keyframes nprogress-spinner {
-  //      0% {
-  //        -webkit-transform: rotate(0deg);
-  //      }
-  //      100% {
-  //        -webkit-transform: rotate(360deg);
-  //      }
-  //    }
-  //    @keyframes nprogress-spinner {
-  //      0% {
-  //        transform: rotate(0deg);
-  //      }
-  //      100% {
-  //        transform: rotate(360deg);
-  //      }
-  //    }
-  //  </style>
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <>
-      {/* <div className="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-white">
-        <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-blue border-t-transparent"></div>
-      </div> */}
+      <style jsx global>{`
+        @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+        :root {
+          font-family: "Roboto", sans-serif;
+        }
+
+        .mobile-menu {
+          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+          height: 100vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-menu.open {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        .mobile-menu.closed {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .mobile-menu::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .mobile-menu {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+
+        /* Navigation Link Hover Effect */
+        .nav-link {
+          position: relative;
+          transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+          content: "";
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(to right, #3b82f6, #2563eb);
+          transition: width 0.3s ease;
+          border-radius: 2px;
+          filter: blur(1px);
+        }
+
+        .nav-link:hover::after {
+          width: 100%;
+        }
+      `}</style>
 
       {/* Header */}
       <header className="fixed left-0 top-0 w-full z-999 bg-white shadow-md transition-all ease-in-out duration-300">
         <div className="max-w-[1170px] mx-auto px-4 sm:px-7.5 xl:px-0">
-          <div className="flex lg:flex-row gap-5 items-end lg:items-center xl:justify-between ease-out duration-200 py-6">
-            <div className="xl:w-auto  w-full flex sm:justify-between sm:items-center gap-5 sm:gap-10">
-              <img alt="Logo" loading="lazy" width="219" height="36" decoding="async" data-nimg="1" style={{ color: "transparent" }} src="images/logo/logo.svg" />
+          <div className="flex flex-col lg:flex-row gap-5 items-end lg:items-center xl:justify-between ease-out duration-200 py-4 sm:py-6">
+            <div className="xl:w-auto flex-col sm:flex-row w-full flex sm:justify-between sm:items-center gap-5 sm:gap-10">
+              <a className="shrink-0" href="index.html">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent hover:from-blue-600 hover:to-blue-700 transition-all duration-300">SmartCompare</h1>
+              </a>
             </div>
             <div className="flex w-full lg:w-auto items-center gap-7.5">
               <div className="hidden xl:flex items-center gap-3.5">
-                <FaPhone className="text-blue text-lg" />
+                <FaPhone className="text-blue-500 text-lg hover:scale-110 transition-transform duration-300" />
                 <div>
                   <span className="block text-xs text-gray-500 uppercase tracking-wider">24/7 SUPPORT</span>
                   <p className="font-semibold text-sm text-gray-800">(+965) 7492-3477</p>
@@ -96,17 +91,17 @@ const LandingPage = () => {
               <span className="hidden xl:block w-px h-7.5 bg-gray-4"></span>
               <div className="flex w-full lg:w-auto justify-between items-center gap-5">
                 <div className="flex items-center gap-5">
-                  <a className="flex items-center gap-2.5 hover:text-blue transition-colors" href="signin.html">
-                    <FaUser className="text-lg text-blue" />
+                  <a className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group" href="signin.html">
+                    <FaUser className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
                     <div className="group">
                       <span className="block text-xs text-gray-500 uppercase tracking-wider">account</span>
-                      <p className="font-semibold text-sm text-gray-800 hover:text-blue">Sign In</p>
+                      <p className="font-semibold text-sm text-gray-800 hover:text-blue-500">Sign In</p>
                     </div>
                   </a>
-                  <button className="flex items-center gap-2.5 hover:text-blue transition-colors">
+                  <button className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group">
                     <span className="inline-block relative">
-                      <FaShoppingCart className="text-lg text-blue" />
-                      <span className="flex items-center justify-center font-semibold text-xs absolute -right-2 -top-2.5 bg-blue w-4.5 h-4.5 rounded-full text-white">0</span>
+                      <FaShoppingCart className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
+                      <span className="flex items-center justify-center font-semibold text-xs absolute -right-2 -top-2.5 bg-blue-500 w-4.5 h-4.5 rounded-full text-white group-hover:bg-blue-600 transition-colors duration-300">0</span>
                     </span>
                     <div>
                       <span className="block text-xs text-gray-500 uppercase tracking-wider">cart</span>
@@ -114,36 +109,36 @@ const LandingPage = () => {
                     </div>
                   </button>
                 </div>
-                <button id="Toggle" aria-label="Toggler" className="xl:hidden block">
-                  <FaBars className="text-xl" />
+                <button id="Toggle" aria-label="Toggler" className="lg:hidden block hover:scale-110 transition-transform duration-300" onClick={toggleMenu}>
+                  {isMenuOpen ? <FaTimes className="text-xl text-blue-500" /> : <FaBars className="text-xl" />}
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-3">
+        <div className="border-t border-gray-300">
           <div className="max-w-[1170px] mx-auto px-4 sm:px-7.5 xl:px-0">
             <div className="flex items-center justify-between">
-              <div className="w-[288px] absolute right-4 top-full xl:static xl:w-auto h-0 xl:h-auto invisible xl:visible xl:flex items-center justify-between">
+              <div className="w-[288px] absolute right-4 top-full hidden lg:block lg:static lg:w-auto lg:h-auto lg:flex items-center justify-between">
                 <nav>
-                  <ul className="flex xl:items-center flex-col xl:flex-row gap-5 xl:gap-6">
-                    <li className="group relative before:w-0 before:h-[3px] before:bg-blue before:absolute before:left-0 before:top-0 before:rounded-b-[3px] before:ease-out before:duration-200 hover:before:w-full">
-                      <a className="hover:text-blue text-sm font-semibold text-gray-800 flex xl:py-6" href="popularfd57.html?sort=popular">
+                  <ul className="flex lg:items-center flex-col lg:flex-row gap-5 lg:gap-6">
+                    <li className="group">
+                      <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6" href="popularfd57.html?sort=popular">
                         Popular
                       </a>
                     </li>
-                    <li className="group relative before:w-0 before:h-[3px] before:bg-blue before:absolute before:left-0 before:top-0 before:rounded-b-[3px] before:ease-out before:duration-200 hover:before:w-full">
-                      <a className="hover:text-blue text-sm font-semibold text-gray-800 flex xl:py-6" href="shop-with-sidebar.html">
+                    <li className="group">
+                      <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6" href="shop-with-sidebar.html">
                         Shop
                       </a>
                     </li>
-                    <li className="group relative before:w-0 before:h-[3px] before:bg-blue before:absolute before:left-0 before:top-0 before:rounded-b-[3px] before:ease-out before:duration-200 hover:before:w-full">
-                      <a className="hover:text-blue text-sm font-semibold text-gray-800 flex xl:py-6" href="contact.html">
+                    <li className="group">
+                      <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6" href="contact.html">
                         Contact
                       </a>
                     </li>
-                    <li className="group relative before:w-0 before:h-[3px] before:bg-blue before:absolute before:left-0 before:top-0 before:rounded-b-[3px] before:ease-out before:duration-200 hover:before:w-full">
-                      <a className="hover:text-blue text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize xl:py-6" href="#">
+                    <li className="group">
+                      <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize lg:py-6" href="#">
                         blogs
                         <BsChevronDown className="text-xs group-hover:rotate-180 transition-transform duration-200" />
                       </a>
@@ -151,17 +146,17 @@ const LandingPage = () => {
                   </ul>
                 </nav>
               </div>
-              <div className="hidden xl:block">
+              <div className="hidden lg:block">
                 <ul className="flex items-center gap-5.5">
                   <li className="py-4">
-                    <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue transition-colors" href="#">
-                      <FaHistory className="text-blue text-base" />
+                    <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue-500 transition-colors group" href="#">
+                      <FaHistory className="text-blue-500 text-base group-hover:scale-110 transition-transform duration-300" />
                       Recently Viewed
                     </a>
                   </li>
                   <li className="py-4">
-                    <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue transition-colors" href="wishlist.html">
-                      <FaHeart className="text-blue text-base" />
+                    <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue-500 transition-colors group" href="wishlist.html">
+                      <FaHeart className="text-blue-500 text-base group-hover:scale-110 transition-transform duration-300" />
                       Wishlist
                     </a>
                   </li>
@@ -170,6 +165,63 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <div className={`mobile-menu fixed top-0 right-0 w-72 h-full bg-white shadow-lg z-50 p-6 lg:hidden ${isMenuOpen ? "open" : "closed"}`}>
+          <div className="flex flex-col gap-6 pb-6">
+            <div className="flex items-center gap-3.5">
+              <FaPhone className="text-blue-500 text-lg" />
+              <div>
+                <span className="block text-xs text-gray-500 uppercase tracking-wider">24/7 SUPPORT</span>
+                <p className="font-semibold text-sm text-gray-800">(+965) 7492-3477</p>
+              </div>
+            </div>
+            <nav>
+              <ul className="flex flex-col gap-4">
+                <li>
+                  <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" href="popularfd57.html?sort=popular">
+                    Popular
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" href="shop-with-sidebar.html">
+                    Shop
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" href="contact.html">
+                    Contact
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize py-3" href="#">
+                    blogs
+                    <BsChevronDown className="text-xs" />
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <div className="border-t border-gray-200 pt-4">
+              <ul className="flex flex-col gap-4">
+                <li>
+                  <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue-500 transition-colors py-3" href="#">
+                    <FaHistory className="text-blue-500 text-base" />
+                    Recently Viewed
+                  </a>
+                </li>
+                <li>
+                  <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue-500 transition-colors py-3" href="wishlist.html">
+                    <FaHeart className="text-blue-500 text-base" />
+                    Wishlist
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Overlay */}
+        {isMenuOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={toggleMenu} />}
       </header>
     </>
   );
