@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { FaPhone, FaUser, FaShoppingCart, FaBars, FaTimes, FaHeart, FaHistory, FaBalanceScale } from "react-icons/fa";
 import { BsChevronDown } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import { FaAmazon, FaEbay } from "react-icons/fa";
+import { RiAmazonLine } from "react-icons/ri";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -63,25 +66,32 @@ const Navbar = () => {
               <nav>
                 <ul className="flex lg:items-center flex-col lg:flex-row gap-5 lg:gap-6">
                   <li className="group">
-                    <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6" href="popularfd57.html?sort=popular">
-                      Popular
-                    </a>
+                    <Link to="/" className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6">
+                      Home
+                    </Link>
                   </li>
                   <li className="group">
-                    <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6" href="shop-with-sidebar.html">
-                      Shop
-                    </a>
+                    <Link to="/search-amazon-product" className="nav-link hover:text-[#FF9900] text-sm font-semibold text-gray-800 flex lg:py-6 items-center gap-2">
+                      <RiAmazonLine className="w-5 h-5" />
+                      Amazon
+                    </Link>
                   </li>
                   <li className="group">
-                    <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6" href="contact.html">
+                    <Link to="/search-ebay-product" className="nav-link hover:text-[#E53238] text-sm font-semibold text-gray-800 flex lg:py-6 items-center gap-2">
+                      <FaEbay className="w-5 h-5" />
+                      eBay
+                    </Link>
+                  </li>
+                  <li className="group">
+                    <Link to="/contact" className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6">
                       Contact
-                    </a>
+                    </Link>
                   </li>
                   <li className="group">
-                    <a className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize lg:py-6" href="#">
+                    <Link to="/blogs" className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize lg:py-6">
                       blogs
                       <BsChevronDown className="text-xs group-hover:rotate-180 transition-transform duration-200" />
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </nav>
@@ -119,25 +129,32 @@ const Navbar = () => {
           <nav>
             <ul className="flex flex-col gap-4">
               <li>
-                <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" href="popularfd57.html?sort=popular">
-                  Popular
-                </a>
+                <Link to="/" className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" onClick={toggleMenu}>
+                  Home
+                </Link>
               </li>
               <li>
-                <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" href="shop-with-sidebar.html">
-                  Shop
-                </a>
+                <Link to="/search-amazon-product" className="hover:text-[#FF9900] text-sm font-semibold text-gray-800 flex py-3 items-center gap-2" onClick={toggleMenu}>
+                  <RiAmazonLine className="w-5 h-5" />
+                  Amazon
+                </Link>
               </li>
               <li>
-                <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" href="contact.html">
+                <Link to="/search-ebay-product" className="hover:text-[#E53238] text-sm font-semibold text-gray-800 flex py-3 items-center gap-2" onClick={toggleMenu}>
+                  <FaEbay className="w-5 h-5" />
+                  eBay
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" onClick={toggleMenu}>
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize py-3" href="#">
+                <Link to="/blogs" className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize py-3" onClick={toggleMenu}>
                   blogs
                   <BsChevronDown className="text-xs" />
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>

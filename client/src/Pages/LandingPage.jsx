@@ -4,6 +4,8 @@ import Hero from "../Components/Hero";
 import CategorySection from "../Components/CategorySection";
 import AmazonProducts from "../Components/AmazonProducts";
 import EbayProducts from "../Components/EbayProducts";
+import Footer from "../Components/Footer";
+import SearchAmazonProduct from "../Pages/SearchAmazonProduct";
 const LandingPage = () => {
   return (
     <>
@@ -12,6 +14,7 @@ const LandingPage = () => {
       <CategorySection />
       <AmazonProducts />
       <EbayProducts />
+      <Footer />
     </>
   );
 };
