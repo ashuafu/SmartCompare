@@ -7,6 +7,7 @@ import headphone from "/assets/headphone.webp";
 import tab from "/assets/Tab.webp";
 import laptop from "/assets/laptops.webp";
 import ProductCard from "./ProductCard";
+import { Link } from "react-router-dom";
 
 const AmazonProducts = () => {
   const products = [
@@ -67,10 +68,10 @@ const AmazonProducts = () => {
           </div>
           <p className="text-gray-600 text-lg">Top rated products with fast & free shipping</p>
           <div className="mt-6 flex items-center gap-4">
-            <button className="flex items-center gap-2 px-6 py-2.5 bg-[#232F3E] text-white rounded-full hover:bg-[#FF9900] transition-all duration-300">
-              <span className="font-medium">Shop Now</span>
+            <Link to="/search-amazon-product" className="flex items-center gap-2 px-6 py-2.5 bg-[#232F3E] text-white rounded-full hover:bg-[#FF9900] transition-all duration-300">
+              <span className="font-medium">View more</span>
               <IoChevronForward className="w-5 h-5" />
-            </button>
+            </Link>
             <div className="flex items-center gap-2 text-[#232F3E]">
               <FaShippingFast className="w-5 h-5" />
               <span className="font-medium">Free Prime Shipping</span>

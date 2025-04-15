@@ -1,7 +1,8 @@
 import { IoStar, IoStarHalf } from "react-icons/io5";
 import { FaAmazon } from "react-icons/fa";
+import { BsShop } from "react-icons/bs";
+import { FaRegCommentDots } from "react-icons/fa";
 
-// Reusable Product Card Component
 const ProductCard = ({ product }) => {
   const renderRatingStars = (rating) => {
     const stars = [];
@@ -35,7 +36,14 @@ const ProductCard = ({ product }) => {
 
       {/* Product Image */}
       <div className="aspect-square p-6 flex items-center justify-center overflow-hidden relative">
-        <img src={product.image} alt={product.title} className="w-48 h-48 object-contain transform transition-transform duration-500 group-hover:scale-110" />
+        <img
+          src={product.image}
+          alt={product.title}
+          className="w-48 h-48 object-contain transform transition-transform duration-500 group-hover:scale-110"
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/200?text=No+Image";
+          }}
+        />
       </div>
 
       {/* Product Info */}
@@ -45,7 +53,15 @@ const ProductCard = ({ product }) => {
 
         {/* Rating & Prime */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-1">{renderRatingStars(product.rating)}</div>
+          <div className="flex items-center gap-1">
+            {renderRatingStars(product.rating)}
+            {product.reviews && (
+              <span className="text-xs text-gray-500 ml-1 flex items-center">
+                <FaRegCommentDots className="mr-1" />
+                {product.reviews}
+              </span>
+            )}
+          </div>
           {product.isPrime && (
             <div className="flex items-center gap-1 text-[#FF9900]">
               <FaAmazon className="w-4 h-4" />
@@ -54,14 +70,22 @@ const ProductCard = ({ product }) => {
           )}
         </div>
 
+        {/* Shop Information */}
+        {product.shop && (
+          <div className="flex items-center text-sm text-gray-600 mb-2">
+            <BsShop className="mr-1.5" />
+            <span className="truncate">{product.shop}</span>
+          </div>
+        )}
+
         {/* Price */}
         <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-2xl font-bold text-gray-900">${product.price}</span>
-          {product.originalPrice > product.price && <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>}
+          <span className="text-2xl font-bold text-gray-900">{product.price}</span>
+          {product.originalPrice > product.price && <span className="text-sm text-gray-500 line-through">{product.originalPrice}</span>}
         </div>
 
         {/* Add to Cart Button */}
-        <button onClick={() => window.open(product.url, "_blank")} className="w-full bg-[#FF9900] hover:bg-[#FF9900]/90 text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+        <button onClick={() => window.open(product.url, "_blank")} className="w-full cursor-pointer font-extrabold bg-[#FF9900] hover:bg-[#FF9900]/90 text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
           Shop Now
         </button>
       </div>

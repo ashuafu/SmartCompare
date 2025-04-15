@@ -13,11 +13,14 @@ const ITEMS_PER_PAGE = 8;
 
 const SearchAmazonProduct = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Set to true initially for testing
-  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [allProducts, setAllProducts] = useState([]); // Store all products
   const [currentPage, setCurrentPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
   const [error, setError] = useState(null);
+
+  // Calculate the current page's products
+  const currentProducts = allProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
 
   const performSearch = async (query) => {
     if (!query.trim()) return;
@@ -58,8 +61,9 @@ const SearchAmazonProduct = () => {
         url: product.product_url,
       }));
 
-      setProducts(transformedProducts);
-      const total = parseInt(response.data.data.total) || 0;
+      console.log(response);
+      setAllProducts(transformedProducts);
+      const total = parseInt(response.data.data.products.length) || 0;
       setTotalResults(total);
     } catch (err) {
       setError("Failed to fetch products. Please try again later.");
@@ -78,15 +82,10 @@ const SearchAmazonProduct = () => {
 
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
-    if (searchQuery.trim()) {
-      performSearch(searchQuery);
-    }
   };
 
   const clearSearch = () => {
     setSearchQuery("");
-    setTotalResults(0);
-    setCurrentPage(0);
   };
 
   // Calculate page count, ensuring it's a valid number
@@ -154,10 +153,10 @@ const SearchAmazonProduct = () => {
             <ErrorState />
           ) : isLoading ? (
             <LoadingSkeleton />
-          ) : products.length > 0 ? (
+          ) : currentProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {products.map((product) => (
+                {currentProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
@@ -183,18 +182,19 @@ const SearchAmazonProduct = () => {
                   marginPagesDisplayed={1}
                   pageRangeDisplayed={3}
                   onPageChange={handlePageClick}
+                  forcePage={currentPage}
                   containerClassName="flex justify-center items-center space-x-1"
-                  pageClassName="flex items-center justify-center"
+                  pageClassName="flex items-center justify-center cursor-pointer"
                   pageLinkClassName="w-8 h-8 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-[#FF9900] transition-colors"
                   activeClassName="bg-[#FF9900] rounded-full"
-                  activeLinkClassName="text-white"
+                  activeLinkClassName="text-white hover:text-white"
                   previousClassName="flex items-center justify-center"
-                  previousLinkClassName="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-[#FF9900] transition-colors"
+                  previousLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-[#FF9900] transition-colors"
                   nextClassName="flex items-center justify-center"
-                  nextLinkClassName="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-[#FF9900] transition-colors"
+                  nextLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-[#FF9900] transition-colors"
                   disabledClassName="opacity-40 cursor-not-allowed"
                   breakClassName="flex items-center justify-center"
-                  breakLinkClassName="w-8 h-8 flex items-center justify-center text-gray-600"
+                  breakLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600"
                 />
               </div>
             </>

@@ -5,6 +5,7 @@ import SignUp from "./Pages/SignUp";
 import SignIn from "./Pages/SignIn";
 import SearchAmazonProduct from "./Pages/SearchAmazonProduct";
 import SearchEbayProduct from "./Pages/SearchEbayProducts";
+import CompareProductPrices from "./Pages/CompareProductPrices";
 function App() {
   return (
     <Router>
@@ -14,6 +15,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/search-amazon-product" element={<SearchAmazonProduct />} />
         <Route path="/search-ebay-product" element={<SearchEbayProduct />} />
+        <Route path="/compare-product-prices" element={<CompareProductPrices />} />
       </Routes>
     </Router>
   );

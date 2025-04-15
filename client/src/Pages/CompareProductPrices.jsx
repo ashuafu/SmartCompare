@@ -1,72 +1,117 @@
-import React, { useState } from "react";
-import { IoSearch, IoClose } from "react-icons/io5";
-import { FaEbay } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { IoSearch, IoClose, IoFilter } from "react-icons/io5";
+import { FaBalanceScale, FaAmazon, FaEbay } from "react-icons/fa";
 import ProductCard from "../Components/ProductCard";
 import Navbar from "../Components/Navbar";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import ReactPaginate from "react-paginate";
 import axios from "axios";
 import LoadingSkeleton from "../Components/Loaders/LoadingSkeleton";
+import Filters from "../Components/Filter/Filter";
 
 const ITEMS_PER_PAGE = 8;
 
-const SearchEbayProducts = () => {
+const CompareProductPrices = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
   const [error, setError] = useState(null);
 
-  // Calculate the current page's products
-  const currentProducts = allProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
+  // Filter states
+  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [minRating, setMinRating] = useState(0);
+  const [minReviews, setMinReviews] = useState(0);
+  const [selectedStores, setSelectedStores] = useState([]);
+
+  const currentProducts = filteredProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
+
+  // Apply filters whenever filters or allProducts change
+  useEffect(() => {
+    applyFilters();
+  }, [allProducts, priceRange, minRating, minReviews, selectedStores]);
 
   const extractRating = (ratingString) => {
     if (!ratingString) return 0;
-
-    // Extract the first number in the string (like 4.5 from "4.5 out of 5 stars")
     const match = ratingString.match(/\d+(\.\d+)?/);
     return match ? parseFloat(match[0]) : 0;
   };
 
-  const performSearch = async (query) => {
-    if (!query.trim()) {
-      setError("Please enter a search term");
-      return;
+  const extractReviewCount = (reviewString) => {
+    if (!reviewString) return 0;
+    // Extract numbers from strings like "(5,508)" or "5508 reviews"
+    const match = reviewString.match(/(\d{1,3}(?:,\d{3})*)/);
+    return match ? parseInt(match[0].replace(/,/g, "")) : 0;
+  };
+
+  const extractPrice = (priceString) => {
+    if (!priceString) return 0;
+    // Extract numeric value from price strings like "$1,920.06"
+    const match = priceString.match(/\d{1,3}(?:,\d{3})*(?:\.\d{2})?/);
+    return match ? parseFloat(match[0].replace(/,/g, "")) : 0;
+  };
+
+  const applyFilters = () => {
+    let results = [...allProducts];
+
+    // Price filter
+    results = results.filter((product) => {
+      const price = extractPrice(product.price);
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+
+    // Rating filter
+    if (minRating > 0) {
+      results = results.filter((product) => product.rating >= minRating);
     }
+
+    // Reviews filter
+    if (minReviews > 0) {
+      results = results.filter((product) => extractReviewCount(product.reviews) >= minReviews);
+    }
+
+    // Store filter
+    if (selectedStores.length > 0) {
+      results = results.filter((product) => selectedStores.some((store) => product.shop?.toLowerCase().includes(store.toLowerCase())));
+    }
+
+    setFilteredProducts(results);
+    setTotalResults(results.length);
+    setCurrentPage(0); // Reset to first page when filters change
+  };
+
+  const performSearch = async (query) => {
+    if (!query.trim()) return;
 
     setIsLoading(true);
     setError(null);
-
     try {
-      const options = {
-        method: "GET",
-        url: `https://ebay-search-result.p.rapidapi.com/search/${encodeURIComponent(query)}`,
+      const response = await axios.get(`${import.meta.env.VITE_PRICE_COMPARISON_API_URL}?q=${encodeURIComponent(query)}`, {
         headers: {
-          "x-rapidapi-host": "ebay-search-result.p.rapidapi.com",
-          "x-rapidapi-key": "f89050bb16mshb873acb6650d518p134c5ejsndb6c9a93744b",
+          Authorization: `Bearer ${import.meta.env.VITE_PRICE_COMPARISON_API_KEY}`,
         },
-      };
+      });
 
-      const response = await axios.request(options);
-      console.log(response.data.results);
+      const transformedProducts =
+        response.data?.map((product) => ({
+          id: Math.random().toString(36).substring(2, 9),
+          title: product.title,
+          image: product.img,
+          price: product.price,
+          rating: extractRating(product.rating),
+          reviews: product.reviews,
+          shop: product.shop,
+          url: product.link,
+          numericPrice: extractPrice(product.price),
+          numericReviews: extractReviewCount(product.reviews),
+        })) || [];
 
-      const transformedProducts = response.data.results.map((product) => ({
-        id: product.id,
-        title: product.title,
-        image: product.image,
-        price: product.price,
-        rating: extractRating(product.rating),
-        url: product.url,
-      }));
-
-      setAllProducts(transformedProducts || []);
-      setTotalResults(response.data.results.length || 0);
+      setAllProducts(transformedProducts);
     } catch (err) {
       setError("Failed to fetch products. Please try again later.");
       console.error("Search error:", err);
-      setAllProducts([]);
     } finally {
       setIsLoading(false);
     }
@@ -77,12 +122,6 @@ const SearchEbayProducts = () => {
     performSearch(searchQuery);
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
   };
@@ -91,20 +130,24 @@ const SearchEbayProducts = () => {
     setSearchQuery("");
   };
 
-  // Calculate page count, ensuring it's a valid number
+  const resetFilters = () => {
+    setPriceRange([0, 5000]);
+    setMinRating(0);
+    setMinReviews(0);
+    setSelectedStores([]);
+  };
+
   const pageCount = Math.max(1, Math.ceil(totalResults / ITEMS_PER_PAGE));
 
-  // Empty state component
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="w-16 h-16 mb-4 text-gray-400 animate-pulse">
         <IoSearch className="w-full h-full" />
       </div>
-      <p className="text-gray-600 text-lg">{searchQuery ? "No products found matching your search." : "Your search results will appear here"}</p>
+      <p className="text-gray-600 text-lg">Your search results will appear here</p>
     </div>
   );
 
-  // Error state component
   const ErrorState = () => (
     <div className="flex flex-col items-center justify-center py-12">
       <p className="text-red-500 text-lg">{error}</p>
@@ -119,29 +162,30 @@ const SearchEbayProducts = () => {
           {/* Header */}
           <div className="flex flex-col items-center text-center mb-12">
             <div className="flex items-center gap-2 mb-3">
-              <FaEbay className="w-8 h-8 text-[#E53238]" />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-[#0064D2] to-[#E53238] bg-clip-text text-transparent">Search eBay Products</h2>
+              <FaBalanceScale className="w-8 h-8 text-indigo-600" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Compare Product Prices</h2>
             </div>
-            <p className="text-gray-600 text-lg">Find the best deals on eBay</p>
+            <p className="text-gray-600 text-lg">Find the best prices across multiple stores</p>
           </div>
-
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12">
+          <div className="max-w-2xl mx-auto mb-8">
             <div className="relative">
-              <input type="text" placeholder="Search for products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyPress={handleKeyPress} className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0064D2] focus:border-transparent text-gray-700" />
+              <input type="text" placeholder="Search for products to compare..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyPress={(e) => e.key === "Enter" && handleSearch()} className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-700" />
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
                 {searchQuery && (
                   <button onClick={clearSearch} className="text-gray-400 hover:text-gray-600">
                     <IoClose className="w-6 h-6" />
                   </button>
                 )}
-                <button onClick={handleSearch} className="text-[#E53238] hover:text-[#E53238]/80" disabled={isLoading}>
-                  {isLoading ? <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#E53238]"></div> : <IoSearch className="w-6 h-6" />}
+                <button onClick={handleSearch} className="text-indigo-600 hover:text-indigo-800">
+                  <IoSearch className="w-6 h-6" />
                 </button>
               </div>
             </div>
           </div>
 
+          {/* Filters Panel */}
+          <Filters priceRange={priceRange} setPriceRange={setPriceRange} minRating={minRating} setMinRating={setMinRating} minReviews={minReviews} setMinReviews={setMinReviews} selectedStores={selectedStores} setSelectedStores={setSelectedStores} onResetFilters={resetFilters} />
           {/* Results Count */}
           {totalResults > 0 && (
             <div className="text-center mb-8">
@@ -150,7 +194,6 @@ const SearchEbayProducts = () => {
               </p>
             </div>
           )}
-
           {/* Content */}
           {error ? (
             <ErrorState />
@@ -188,13 +231,13 @@ const SearchEbayProducts = () => {
                   forcePage={currentPage}
                   containerClassName="flex justify-center items-center space-x-1"
                   pageClassName="flex items-center justify-center cursor-pointer"
-                  pageLinkClassName="w-8 h-8 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-[#E53238] transition-colors"
-                  activeClassName="bg-[#E53238] rounded-full"
+                  pageLinkClassName="w-8 h-8 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                  activeClassName="bg-indigo-600 rounded-full"
                   activeLinkClassName="text-white hover:text-white"
                   previousClassName="flex items-center justify-center"
-                  previousLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-[#E53238] transition-colors"
+                  previousLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-indigo-600 transition-colors"
                   nextClassName="flex items-center justify-center"
-                  nextLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-[#E53238] transition-colors"
+                  nextLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-indigo-600 transition-colors"
                   disabledClassName="opacity-40 cursor-not-allowed"
                   breakClassName="flex items-center justify-center"
                   breakLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600"
@@ -210,4 +253,4 @@ const SearchEbayProducts = () => {
   );
 };
 
-export default SearchEbayProducts;
+export default CompareProductPrices;

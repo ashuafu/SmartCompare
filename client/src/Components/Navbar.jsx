@@ -33,13 +33,13 @@ const Navbar = () => {
             <span className="hidden xl:block w-px h-7.5 bg-gray-300"></span>
             <div className="flex w-full lg:w-auto justify-between items-center gap-5">
               <div className="flex items-center gap-5">
-                <a className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group" href="signin.html">
+                <Link className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group" to="/signin">
                   <FaUser className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
                   <div className="group">
                     <span className="block text-xs text-gray-500 uppercase tracking-wider">account</span>
                     <p className="font-semibold text-sm text-gray-800 hover:text-blue-500">Sign In</p>
                   </div>
-                </a>
+                </Link>
                 <span className="w-px h-7.5 bg-gray-300"></span>
                 <button className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group">
                   <span className="inline-block relative">
@@ -83,8 +83,8 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li className="group">
-                    <Link to="/contact" className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6">
-                      Contact
+                    <Link to="/compare-product-prices" className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex lg:py-6">
+                      Compare prices
                     </Link>
                   </li>
                   <li className="group">
@@ -146,8 +146,8 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" onClick={toggleMenu}>
-                  Contact
+                <Link to="/compare-product-prices" className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex py-3" onClick={toggleMenu}>
+                  Compare prices
                 </Link>
               </li>
               <li>
