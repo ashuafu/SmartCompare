@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import Swal from "sweetalert2";
+import showAlert from "../Utils/Utils";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,9 +29,9 @@ const SignUp = () => {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log(formData);
-      // Handle successful submission
+      showAlert("success", "Account Created!", "Your account has been successfully created.");
     } catch (error) {
+      showAlert("error", "Something went wrong!", error.message);
       console.error(error);
     } finally {
       setIsSubmitting(false);
