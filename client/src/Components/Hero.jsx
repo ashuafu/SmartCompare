@@ -11,24 +11,27 @@ const Hero = () => {
   const mainSlides = [
     {
       id: 1,
-      title: "Macbook Pro M4 Pro - 512/16GB",
-      description: "Experience the power of the latest M4 chip with exceptional performance and battery life",
+      title: "Amazon Basics 27 inch Monitor",
+      description: "27-inch Full HD monitor with 100Hz refresh rate, built-in speakers, and VESA mount compatibility for a seamless workspace setup.",
       discount: "30%",
-      image: watch,
+      image: "https://m.media-amazon.com/images/I/710q+sSccwL._AC_SX679_.jpg",
+      url: "https://www.amazon.com/dp/B0CP7RZRMD",
     },
+
     {
       id: 2,
-      title: "iPhone 15 Pro Max",
-      description: "Capture stunning photos and videos with our most advanced camera system yet",
-      discount: "25%",
-      image: headphone,
+      title: "Apple iPad Pro 12.9-inch",
+      description: "Apple's powerful 12.9-inch Liquid Retina XDR display with the M2 chip, delivering top-tier performance and stunning visuals.",
+      discount: "2%",
+      image: "https://m.media-amazon.com/images/I/81c+9BOQNWL._AC_SX679_.jpg",
     },
+
     {
       id: 3,
-      title: "iPad Pro M2",
-      description: "Transform your creativity with the most powerful and versatile iPad ever",
-      discount: "20%",
-      image: tab,
+      title: "Apple Watch SE (2nd Gen)",
+      description: "Essential features to help you stay connected, active, healthy, and safe — now with enhanced performance and crash detection.",
+      discount: "10%",
+      image: "https://m.media-amazon.com/images/I/71YdE55GwjL._AC_SL1500_.jpg",
     },
   ];
 
@@ -92,7 +95,9 @@ const Hero = () => {
                       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1E2A53] tracking-tight leading-tight">{slide.title}</h1>
                       <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-md">{slide.description}</p>
 
-                      <button className="bg-gradient-to-r from-[#1E2A53] to-[#3B82F6] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:from-[#2A3A6A] hover:to-[#4B8DFF] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Shop Now</button>
+                      <button onClick={() => window.open(slide.url, "_blank")} className="bg-gradient-to-r from-[#1E2A53] to-[#3B82F6] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:from-[#2A3A6A] hover:to-[#4B8DFF] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        Shop Now
+                      </button>
                     </div>
 
                     <div className="lg:w-1/2 h-[250px] sm:h-[300px] lg:h-[350px] overflow-hidden rounded-xl p-4">

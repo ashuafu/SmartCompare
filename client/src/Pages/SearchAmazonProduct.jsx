@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoSearch, IoClose } from "react-icons/io5";
 import { RiAmazonLine } from "react-icons/ri";
 import ProductCard from "../Components/ProductCard";
@@ -8,6 +8,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import ReactPaginate from "react-paginate";
 import axios from "axios";
 import LoadingSkeleton from "../Components/Loaders/LoadingSkeleton";
+import Filters from "../Components/Filter/Filter"; // Import the Filters component
 
 const ITEMS_PER_PAGE = 8;
 
@@ -15,13 +16,47 @@ const SearchAmazonProduct = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [allProducts, setAllProducts] = useState([]); // Store all products
+  const [filteredProducts, setFilteredProducts] = useState([]); // Filtered products
   const [currentPage, setCurrentPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
   const [error, setError] = useState(null);
 
-  // Calculate the current page's products
-  const currentProducts = allProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
+  // Filter states
+  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [minRating, setMinRating] = useState(0);
+  const [selectedStores, setSelectedStores] = useState([]);
 
+  // Apply filters whenever filters or allProducts change
+  useEffect(() => {
+    applyFilters();
+  }, [allProducts, priceRange, minRating]);
+
+  // Filter the products based on filters
+  const applyFilters = () => {
+    let results = [...allProducts];
+
+    // Price filter
+    results = results.filter((product) => {
+      const price = parseFloat(product.price.replace(/[^0-9.-]+/g, ""));
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+
+    // Rating filter
+    if (minRating > 0) {
+      results = results.filter((product) => product.rating >= minRating);
+    }
+
+    // Store filter
+    if (selectedStores.length > 0) {
+      results = results.filter((product) => selectedStores.some((store) => product.shop?.toLowerCase().includes(store.toLowerCase())));
+    }
+
+    setFilteredProducts(results);
+    setTotalResults(results.length);
+    setCurrentPage(0); // Reset to first page when filters change
+  };
+
+  // Perform search
   const performSearch = async (query) => {
     if (!query.trim()) return;
 
@@ -54,17 +89,15 @@ const SearchAmazonProduct = () => {
         title: product.product_title,
         image: product.product_photo,
         price: product.product_price,
-        originalPrice: product.product_original_price,
         rating: product.product_star_rating,
-        isPrime: product.is_prime,
-        discount: product.product_discount,
+        reviews: product.product_reviews,
+        shop: "Amazon", // Store name is Amazon in this case
         url: product.product_url,
       }));
 
-      console.log(response);
       setAllProducts(transformedProducts);
-      const total = parseInt(response.data.data.products.length) || 0;
-      setTotalResults(total);
+      setFilteredProducts(transformedProducts); // Initialize filtered products with all products
+      setTotalResults(transformedProducts.length);
     } catch (err) {
       setError("Failed to fetch products. Please try again later.");
       console.error("Search error:", err);
@@ -73,13 +106,13 @@ const SearchAmazonProduct = () => {
     }
   };
 
-  console.log(totalResults);
-
+  // Handle search trigger
   const handleSearch = () => {
     setCurrentPage(0);
     performSearch(searchQuery);
   };
 
+  // Handle page change
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
   };
@@ -88,7 +121,7 @@ const SearchAmazonProduct = () => {
     setSearchQuery("");
   };
 
-  // Calculate page count, ensuring it's a valid number
+  // Calculate page count
   const pageCount = Math.max(1, Math.ceil(totalResults / ITEMS_PER_PAGE));
 
   // Empty state component
@@ -132,12 +165,27 @@ const SearchAmazonProduct = () => {
                     <IoClose className="w-6 h-6" />
                   </button>
                 )}
-                <button onClick={handleSearch} className="text-[#FF9900] hover:text-[#FF9900]/80">
+                <button onClick={handleSearch} className="text-[#FF9900] hover:text-[#FF6600]">
                   <IoSearch className="w-6 h-6" />
                 </button>
               </div>
             </div>
           </div>
+
+          {/* Filters Panel */}
+          <Filters
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            minRating={minRating}
+            setMinRating={setMinRating}
+            selectedStores={selectedStores}
+            setSelectedStores={setSelectedStores}
+            onResetFilters={() => {
+              setPriceRange([0, 5000]);
+              setMinRating(0);
+              setSelectedStores([]);
+            }}
+          />
 
           {/* Results Count */}
           {totalResults > 0 && (
@@ -153,49 +201,17 @@ const SearchAmazonProduct = () => {
             <ErrorState />
           ) : isLoading ? (
             <LoadingSkeleton />
-          ) : currentProducts.length > 0 ? (
+          ) : filteredProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {currentProducts.map((product) => (
+                {filteredProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE).map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+
               {/* Pagination */}
               <div className="mt-12">
-                <ReactPaginate
-                  previousLabel={
-                    <span className="flex items-center justify-center w-8 h-8">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </span>
-                  }
-                  nextLabel={
-                    <span className="flex items-center justify-center w-8 h-8">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </span>
-                  }
-                  breakLabel="..."
-                  pageCount={pageCount}
-                  marginPagesDisplayed={1}
-                  pageRangeDisplayed={3}
-                  onPageChange={handlePageClick}
-                  forcePage={currentPage}
-                  containerClassName="flex justify-center items-center space-x-1"
-                  pageClassName="flex items-center justify-center cursor-pointer"
-                  pageLinkClassName="w-8 h-8 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-[#FF9900] transition-colors"
-                  activeClassName="bg-[#FF9900] rounded-full"
-                  activeLinkClassName="text-white hover:text-white"
-                  previousClassName="flex items-center justify-center"
-                  previousLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-[#FF9900] transition-colors"
-                  nextClassName="flex items-center justify-center"
-                  nextLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600 hover:text-[#FF9900] transition-colors"
-                  disabledClassName="opacity-40 cursor-not-allowed"
-                  breakClassName="flex items-center justify-center"
-                  breakLinkClassName="w-8 cursor-pointer h-8 flex items-center justify-center text-gray-600"
-                />
+                <ReactPaginate previousLabel={<span className="text-gray-600 hover:text-gray-800 cursor-pointer">Previous</span>} nextLabel={<span className="text-gray-600 hover:text-gray-800 cursor-pointer">Next</span>} pageCount={pageCount} onPageChange={handlePageClick} containerClassName="flex justify-center gap-4" pageClassName="px-4 py-2 rounded-md cursor-pointer hover:bg-[#FF9900] hover:text-white" activeClassName="bg-[#FF9900] text-white" disabledClassName="opacity-50 cursor-not-allowed" />
               </div>
             </>
           ) : (

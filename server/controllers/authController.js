@@ -43,6 +43,9 @@ exports.login = asyncHandler(async (req, res, next) => {
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
 
+  const userWithoutPassword = user.toObject();
+  delete userWithoutPassword.password;
+
   const options = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
     httpOnly: true,
@@ -54,6 +57,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 
   res.status(statusCode).cookie("token", token, options).json({
     success: true,
+    user: userWithoutPassword,
     token,
   });
 };

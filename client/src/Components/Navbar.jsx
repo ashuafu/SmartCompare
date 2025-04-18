@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { FaPhone, FaUser, FaShoppingCart, FaBars, FaTimes, FaHeart, FaHistory, FaBalanceScale } from "react-icons/fa";
+import { FaPhone, FaUser, FaShoppingCart, FaBars, FaTimes, FaHeart, FaHistory, FaBalanceScale, FaUserCircle } from "react-icons/fa";
 import { BsChevronDown } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaAmazon, FaEbay } from "react-icons/fa";
 import { RiAmazonLine } from "react-icons/ri";
-
+import { FiLogOut } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+import { userLoggedOut } from "../Redux/UserReducer";
+import { showAlert } from "../Utils/Utils";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authData = JSON.parse(localStorage.getItem("authToken"));
+  const now = new Date();
+  const isAuthenticated = authData && authData.token && authData.expiry > now.getTime();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -17,10 +25,10 @@ const Navbar = () => {
       <div className="max-w-[1170px] mx-auto px-4 sm:px-7.5 xl:px-0">
         <div className="flex flex-col lg:flex-row gap-5 items-end lg:items-center xl:justify-between ease-out duration-200 py-4 sm:py-6">
           <div className="xl:w-auto flex-col sm:flex-row w-full flex sm:justify-between sm:items-center gap-5 sm:gap-10">
-            <a className="shrink-0 flex items-center gap-2" href="index.html">
+            <Link to="/" className="shrink-0 flex items-center gap-2">
               <FaBalanceScale className="text-blue-500 text-2xl hover:scale-110 transition-transform duration-300" />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 transition-all duration-300">SmartCompare</h1>
-            </a>
+            </Link>
           </div>
           <div className="flex w-full lg:w-auto items-center gap-7.5">
             <div className="hidden xl:flex items-center gap-3.5">
@@ -33,24 +41,41 @@ const Navbar = () => {
             <span className="hidden xl:block w-px h-7.5 bg-gray-300"></span>
             <div className="flex w-full lg:w-auto justify-between items-center gap-5">
               <div className="flex items-center gap-5">
-                <Link className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group" to="/signin">
-                  <FaUser className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
-                  <div className="group">
-                    <span className="block text-xs text-gray-500 uppercase tracking-wider">account</span>
-                    <p className="font-semibold text-sm text-gray-800 hover:text-blue-500">Sign In</p>
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to log out?")) {
+                        localStorage.removeItem("authToken");
+                        showAlert("success", "Logged out successfully", "You have been logged out successfully");
+                        dispatch(userLoggedOut());
+                        navigate("/signin");
+                      }
+                    }}
+                    className="flex cursor-pointer items-center gap-2.5 hover:text-red-500 transition-colors group"
+                  >
+                    <FiLogOut className="text-lg text-red-500 group-hover:scale-110 transition-transform duration-300" />
+                    <div className="group">
+                      <span className="block text-xs text-gray-500 uppercase tracking-wider">account</span>
+                      <p className="font-semibold text-sm text-gray-800 hover:text-red-500">Logout</p>
+                    </div>
+                  </button>
+                ) : (
+                  <Link className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group" to="/signin">
+                    <FaUser className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
+                    <div className="group">
+                      <span className="block text-xs text-gray-500 uppercase tracking-wider">account</span>
+                      <p className="font-semibold text-sm text-gray-800 hover:text-blue-500">Sign In</p>
+                    </div>
+                  </Link>
+                )}
+
+                <span className="w-px h-7.5 bg-gray-300"></span>
+                <Link to="/user-profile" className="flex cursor-pointer items-center gap-2.5 hover:text-blue-500 transition-colors group">
+                  <FaUserCircle className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
+                  <div>
+                    <span className="block text-xs text-gray-500 uppercase tracking-wider">Profile</span>
                   </div>
                 </Link>
-                <span className="w-px h-7.5 bg-gray-300"></span>
-                <button className="flex items-center gap-2.5 hover:text-blue-500 transition-colors group">
-                  <span className="inline-block relative">
-                    <FaShoppingCart className="text-lg text-blue-500 group-hover:scale-110 transition-transform duration-300" />
-                    <span className="flex items-center justify-center font-semibold text-xs absolute -right-2 -top-2.5 bg-blue-500 w-4.5 h-4.5 rounded-full text-white group-hover:bg-blue-600 transition-colors duration-300">0</span>
-                  </span>
-                  <div>
-                    <span className="block text-xs text-gray-500 uppercase tracking-wider">cart</span>
-                    <p className="font-semibold text-sm text-gray-800">$0</p>
-                  </div>
-                </button>
               </div>
               <button id="Toggle" aria-label="Toggler" className="lg:hidden block hover:scale-110 transition-transform duration-300" onClick={toggleMenu}>
                 {isMenuOpen ? <FaTimes className="text-xl text-blue-500" /> : <FaBars className="text-xl" />}
@@ -87,16 +112,10 @@ const Navbar = () => {
                       Compare prices
                     </Link>
                   </li>
-                  <li className="group">
-                    <Link to="/blogs" className="nav-link hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize lg:py-6">
-                      blogs
-                      <BsChevronDown className="text-xs group-hover:rotate-180 transition-transform duration-200" />
-                    </Link>
-                  </li>
                 </ul>
               </nav>
             </div>
-            <div className="hidden lg:block">
+            {/* <div className="hidden lg:block">
               <ul className="flex items-center gap-5.5">
                 <li className="py-4">
                   <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue-500 transition-colors group" href="#">
@@ -111,7 +130,7 @@ const Navbar = () => {
                   </a>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -150,15 +169,9 @@ const Navbar = () => {
                   Compare prices
                 </Link>
               </li>
-              <li>
-                <Link to="/blogs" className="hover:text-blue-500 text-sm font-semibold text-gray-800 flex items-center gap-1.5 capitalize py-3" onClick={toggleMenu}>
-                  blogs
-                  <BsChevronDown className="text-xs" />
-                </Link>
-              </li>
             </ul>
           </nav>
-          <div className="border-t border-gray-200 pt-4">
+          {/* <div className="border-t border-gray-200 pt-4">
             <ul className="flex flex-col gap-4">
               <li>
                 <a className="flex items-center gap-1.5 font-semibold text-sm text-gray-800 hover:text-blue-500 transition-colors py-3" href="#">
@@ -173,7 +186,7 @@ const Navbar = () => {
                 </a>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
 

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoFilter } from "react-icons/io5";
+import { useLocation } from "react-router-dom"; // Import useLocation if using React Router
 
 const StoreIcons = {
   Amazon: () => (
@@ -48,6 +49,15 @@ const stores = [
 
 const Filters = ({ priceRange, setPriceRange, minRating, setMinRating, minReviews, setMinReviews, selectedStores, setSelectedStores, onResetFilters }) => {
   const [showFilters, setShowFilters] = useState(false);
+  const location = useLocation(); // Get current location (URL path)
+
+  // Determine which stores to display based on the URL path
+  let filteredStores = stores;
+  if (location.pathname === "/search-amazon-product") {
+    filteredStores = stores.filter((store) => store.name === "Amazon");
+  } else if (location.pathname === "/search-ebay-product") {
+    filteredStores = stores.filter((store) => store.name === "eBay");
+  }
 
   const toggleStoreFilter = (store) => {
     setSelectedStores((prev) => (prev.includes(store) ? prev.filter((s) => s !== store) : [...prev, store]));
@@ -91,23 +101,25 @@ const Filters = ({ priceRange, setPriceRange, minRating, setMinRating, minReview
             </div>
 
             {/* Minimum Reviews */}
-            <div>
-              <h3 className="font-medium text-gray-700 mb-2">Minimum Reviews</h3>
-              <select value={minReviews} onChange={(e) => setMinReviews(parseInt(e.target.value))} className="w-full p-2 border border-gray-300 rounded-lg">
-                <option value="0">Any</option>
-                <option value="10">10+</option>
-                <option value="50">50+</option>
-                <option value="100">100+</option>
-                <option value="500">500+</option>
-                <option value="1000">1000+</option>
-              </select>
-            </div>
+            {location.pathname === "/compare-product-prices" && (
+              <div>
+                <h3 className="font-medium text-gray-700 mb-2">Minimum Reviews</h3>
+                <select value={minReviews} onChange={(e) => setMinReviews(parseInt(e.target.value))} className="w-full p-2 border border-gray-300 rounded-lg">
+                  <option value="0">Any</option>
+                  <option value="10">10+</option>
+                  <option value="50">50+</option>
+                  <option value="100">100+</option>
+                  <option value="500">500+</option>
+                  <option value="1000">1000+</option>
+                </select>
+              </div>
+            )}
 
             {/* Store Filter */}
             <div>
               <h3 className="font-medium text-gray-700 mb-2">Stores</h3>
               <div className="flex flex-wrap gap-2">
-                {stores.map((store) => (
+                {filteredStores.map((store) => (
                   <button key={store.name} onClick={() => toggleStoreFilter(store.name)} className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${selectedStores.includes(store.name) ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>
                     <span className="text-xs">{store.icon}</span>
                     {store.name}

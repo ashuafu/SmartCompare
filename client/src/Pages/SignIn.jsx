@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-
+import { useLoginMutation } from "../Services/api";
+import { useDispatch } from "react-redux";
+import { userLoggedIn } from "../Redux/UserReducer";
+import { showAlert, setTokenWithExpiry } from "../Utils/Utils";
+import { useNavigate } from "react-router-dom";
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -9,6 +13,10 @@ const SignIn = () => {
     email: "",
     password: "",
   });
+
+  const [loginApi] = useLoginMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,10 +31,21 @@ const SignIn = () => {
     setIsSubmitting(true);
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log(formData);
-      // Handle successful submission
+      const res = await loginApi({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res.error) {
+        return showAlert("error", "Something went wrong!", res.error.data.message);
+      }
+
+      dispatch(userLoggedIn(res.data.user));
+      setTokenWithExpiry(res.data.token);
+      showAlert("success", "Logged in successfully", "You have been logged in successfully");
+      navigate("/");
     } catch (error) {
+      showAlert("error", "Something went wrong!", error.data.message);
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -42,8 +61,7 @@ const SignIn = () => {
         </div>
 
         <div className="bg-white rounded-xl p-8 space-y-6 shadow-premium hover:shadow-premium-hover transition-shadow duration-300">
-          {/* Social Sign In Buttons */}
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <button className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
               <FaGoogle className="text-blue-500" size={18} />
               <span className="font-medium">Continue with Google</span>
@@ -52,17 +70,17 @@ const SignIn = () => {
               <FaGithub className="text-gray-700" size={18} />
               <span className="font-medium">Continue with GitHub</span>
             </button>
-          </div>
+          </div> */}
 
           {/* Divider */}
-          <div className="relative">
+          {/* <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500">Or continue with email</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Sign In Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -81,7 +99,7 @@ const SignIn = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded" />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
@@ -93,7 +111,7 @@ const SignIn = () => {
                   Forgot password?
                 </a>
               </div>
-            </div>
+            </div> */}
 
             <button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-[#1E2A53] to-[#3B82F6] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:from-[#2A3A6A] hover:to-[#4B8DFF] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-md">
               {isSubmitting ? (

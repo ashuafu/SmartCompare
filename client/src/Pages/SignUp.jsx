@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import Swal from "sweetalert2";
-import showAlert from "../Utils/Utils";
-
+import { showAlert, setTokenWithExpiry } from "../Utils/Utils";
+import { useSignUpMutation } from "../Services/api";
+import { useNavigate } from "react-router-dom";
+import { userLoggedIn } from "../Redux/UserReducer";
+import { useDispatch, useSelector } from "react-redux";
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,16 +25,43 @@ const SignUp = () => {
     }));
   };
 
+  const [signUpApi] = useSignUpMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password.length < 8) {
+      return showAlert("error", "Invalid Password", "Password must be at least 8 characters long.");
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return showAlert("error", "Invalid Password", "Password and Confirm Password do not match.");
+    }
+
     setIsSubmitting(true);
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const res = await signUpApi({
+        username: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res.error) {
+        return showAlert("error", "Something went wrong!", res.error.data.message);
+      }
+
+      dispatch(userLoggedIn(res.data.user));
+
+      setTokenWithExpiry(res.data.token);
+
       showAlert("success", "Account Created!", "Your account has been successfully created.");
+      navigate("/");
     } catch (error) {
       showAlert("error", "Something went wrong!", error.message);
-      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -47,8 +76,7 @@ const SignUp = () => {
         </div>
 
         <div className="bg-white rounded-xl p-8 space-y-6 shadow-premium hover:shadow-premium-hover transition-shadow duration-300">
-          {/* Social Sign Up Buttons */}
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <button className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
               <FaGoogle className="text-blue-500" size={18} />
               <span className="font-medium">Continue with Google</span>
@@ -57,17 +85,17 @@ const SignUp = () => {
               <FaGithub className="text-gray-700" size={18} />
               <span className="font-medium">Continue with GitHub</span>
             </button>
-          </div>
+          </div> */}
 
           {/* Divider */}
-          <div className="relative">
+          {/* <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500">Or continue with email</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Sign Up Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
