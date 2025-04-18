@@ -27,6 +27,10 @@ mongoose
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/profile", profile);
 
+app.get("/", (req, res) => {
+  res.send("🚀 Smart Compare Backend is running!");
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
