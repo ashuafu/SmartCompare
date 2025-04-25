@@ -151,17 +151,17 @@ const ProfileForm = ({ initialData = {}, userId, onFinish }) => {
 
           <div>
             <label className="block text-gray-700 font-medium mb-2">City</label>
-            <input type="text" name="city" value={formData.city} placeholder="Islamabad" onChange={handleChange} required className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />
+            <input type="text" name="city" value={formData.city} placeholder="London" onChange={handleChange} required className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />
           </div>
 
           <div>
             <label className="block text-gray-700 font-medium mb-2">State</label>
-            <input type="text" name="state" value={formData.state} placeholder="Punjab" onChange={handleChange} required className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />
+            <input type="text" name="state" value={formData.state} placeholder="Wales" onChange={handleChange} required className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />
           </div>
 
           <div>
             <label className="block text-gray-700 font-medium mb-2">Country</label>
-            <input type="text" name="country" value={formData.country} placeholder="Pakistan" onChange={handleChange} required className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />
+            <input type="text" name="country" value={formData.country} placeholder="UK" onChange={handleChange} required className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />
           </div>
 
           <div>
