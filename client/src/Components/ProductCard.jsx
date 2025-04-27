@@ -85,7 +85,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Add to Cart Button */}
-        <button onClick={() => window.open(product.url, "_blank")} className="w-full cursor-pointer font-extrabold bg-[#FF9900] hover:bg-[#FF9900]/90 text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+        <button onClick={() => window.open(product.url, "_blank")} className="w-full cursor-pointer font-extrabold bg-[#FF9900] hover:bg-[#FF9900]/90 text-white py-3 rounded-xl font-medium text-sm transition-all duration-300">
           Shop Now
         </button>
       </div>
