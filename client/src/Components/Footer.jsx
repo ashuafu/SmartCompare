@@ -15,18 +15,18 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-center gap-3">
                 <FiMapPin className="text-blue-400" />
-                <span>685 Market Street, Las Vegas, LA 95820, United States</span>
+                <span>60 A Surbiton Road Kingston Upon Thames Kt12ht</span>
               </li>
               <li className="flex items-center gap-3">
                 <FiPhone className="text-blue-400" />
                 <a href="tel:+0995327869843" className="hover:text-blue-400 transition-colors">
-                  (+099) 532-786-9843
+                  07721804361
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <FiMail className="text-blue-400" />
                 <a href="mailto:support@example.com" className="hover:text-blue-400 transition-colors">
-                  support@example.com
+                  Ashuafu95@gmail.com
                 </a>
               </li>
             </ul>
