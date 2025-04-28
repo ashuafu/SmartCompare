@@ -69,7 +69,7 @@ const SearchAmazonProduct = () => {
         params: {
           query: query,
           page: (currentPage + 1).toString(),
-          country: "US",
+          country: "GB",
           sort_by: "RELEVANCE",
           product_condition: "ALL",
           is_prime: "false",
