@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://smart-compare-fvqk.vercel.app/api/v1/", // your backend base URL
+    baseUrl: "https://smart-compare-api.vercel.app/api/v1/", // your backend base URL
   }),
   endpoints: (builder) => ({
     signUp: builder.mutation({
