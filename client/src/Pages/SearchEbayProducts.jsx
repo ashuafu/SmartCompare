@@ -56,9 +56,6 @@ const SearchEbayProducts = () => {
     setCurrentPage(0); // Reset to first page when filters change
   };
 
-  // Calculate the current page's products
-  const currentProducts = allProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
-
   const extractRating = (ratingString) => {
     if (!ratingString) return 0;
 
@@ -217,7 +214,7 @@ const SearchEbayProducts = () => {
 
               {/* Pagination */}
               <div className="mt-12">
-                <ReactPaginate previousLabel={<span className="text-gray-600 hover:text-gray-800 cursor-pointer">Previous</span>} nextLabel={<span className="text-gray-600 hover:text-gray-800 cursor-pointer">Next</span>} pageCount={pageCount} onPageChange={handlePageClick} containerClassName="flex justify-center gap-4" pageClassName="px-4 py-2 rounded-md cursor-pointer hover:bg-[#FF9900] hover:text-white" activeClassName="bg-[#FF9900] text-white" disabledClassName="opacity-50 cursor-not-allowed" />
+                <ReactPaginate previousLabel={<span className="text-gray-600 hover:text-gray-800 cursor-pointer">Previous</span>} nextLabel={<span className="text-gray-600 hover:text-gray-800 cursor-pointer">Next</span>} pageCount={pageCount} onPageChange={handlePageClick} containerClassName="flex justify-center gap-4" pageClassName="px-4 py-2 rounded-md cursor-pointer hover:bg-[#E53238] hover:text-white" activeClassName="bg-[#E53238] text-white" disabledClassName="opacity-50 cursor-not-allowed" />
               </div>
             </>
           ) : (

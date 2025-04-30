@@ -106,6 +106,16 @@ const ProfileForm = ({ initialData = {}, userId, onFinish }) => {
       return showAlert("error", "Validation error!", "Expiry Year must be exactly 4 digits long!");
     }
 
+    // Check if expiry date is in the past
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1; // getMonth() returns 0-11
+    const expiryYear = parseInt(formData.expiryYear);
+    const expiryMonth = parseInt(formData.expiryMonth);
+
+    if (expiryYear < currentYear || (expiryYear === currentYear && expiryMonth < currentMonth)) {
+      return showAlert("error", "Validation error!", "Card expiry date cannot be in the past!");
+    }
+
     try {
       await createOrUpdateProfile({ ...formData }).unwrap();
       showAlert("success", "Profile updated successfully", "");
